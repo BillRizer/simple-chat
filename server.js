@@ -1,3 +1,4 @@
+var randomColor = require('randomcolor');
 var ws = require('websocket').server;
 
 var http = require('http');
@@ -13,6 +14,7 @@ socket.on('request', function (req) {
     
     //criando chave de usuario
     users[req.key] = conn;
+    users[req.key].color = randomColor({hue: 'random',luminosity: 'random',format: 'rgba','alpha':0.3});
     
     conn.on('message', function (data) {
         var data = JSON.parse(data.utf8Data);
@@ -21,11 +23,11 @@ socket.on('request', function (req) {
             //add nome ao usuario
             users[req.key].name = data.name;
             //ele entrou agora
-            conn.send(buil_message(users[req.key].name),undefined);    
+            conn.send(buil_message(users[req.key].color,users[req.key].name),undefined);    
         }
         else{
             // conn.sendUTF(buil_message(users[req.key].name,data.message));    
-            sendAll(buil_message(users[req.key].name,data.message))
+            sendAll(buil_message(users[req.key].color,users[req.key].name,data.message))
         }
         console.log(users);
      });
@@ -42,6 +44,6 @@ function sendAll(obj) {
     }
 }
 
-function buil_message(name,message){
-    return JSON.stringify({name:name,message:message});
+function buil_message(color,name,message){
+    return JSON.stringify({name:name,message:message,color:color});
 }

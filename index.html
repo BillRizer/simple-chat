@@ -6,6 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .baloon{
+        border-radius: 10px;
+        padding: 10px;
+
+    }
+    /* Standard syntax */
+ 
+</style>
 </head>
 
 <body>
@@ -15,8 +24,10 @@
             <div class="jumbotron">
                   <hr class="my-4">
 
-                <div id="name-comp" class="form-inline">
-                    <div class="form-group">
+                <div class="form-inline ">
+                    <h5 id="name-comp-text"></h5>
+                    <div class="form-group " id="name-comp-form">
+                        <label for="inputname" class=" col-form-label">Nome: </label>
                         <input type="text" class="form-control-plaintext" name="name" value="" id="inputname"></input>
                         <button class="btn btn-primary" type="button" onclick="enterChat()">Entrar</button>
                     </div>
@@ -24,8 +35,7 @@
                 <div  id="name-full-comp"></div>
                 <div class="card">
                     <div class="card-body" id="chatbox">
-                        This is some text within a card block.
-                    </div>
+                     </div>
                 </div>
                   <div class="message-comp ">
                         <textarea type="text" class="form-control-plaintext col-12" name="name" value="" id="inputmessage"></textarea>
@@ -58,7 +68,9 @@
         socket.onopen = function () {
             socket.send(obj);
             writeToScreen("agora voce esta conectado");
-
+            
+            document.getElementById('name-comp-form').style.display ="none";
+            document.getElementById('name-comp-text').innerText ='Olá '+ document.getElementById('inputname').value;
         };
 
         socket.onmessage = function (e) {
@@ -76,7 +88,7 @@
         if (obj.message === undefined) {
             writeToScreen('<span style="color: green;"> ' + obj.name + ' entrou</span>');
         } else {
-            writeToScreen('<span style="color: blue;"> ' + obj.name + ':' + obj.message + '</span>');
+            writeToScreen('<span class="baloon" style="background-color: '+obj.color+';"> ' + obj.name + ':' + obj.message + '</span>');
         }
     }
 
@@ -89,6 +101,7 @@
         socket.send(JSON.stringify({
             message: message
         }));
+        document.getElementById('inputmessage').value = '';
     }
 
 
