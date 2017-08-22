@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>chat chato</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="col-6">
+
+            <div class="jumbotron">
+                  <hr class="my-4">
+
+                <div id="name-comp" class="form-inline">
+                    <div class="form-group">
+                        <input type="text" class="form-control-plaintext" name="name" value="" id="inputname"></input>
+                        <button class="btn btn-primary" type="button" onclick="enterChat()">Entrar</button>
+                    </div>
+                </div>
+                <div  id="name-full-comp"></div>
+                <div class="card">
+                    <div class="card-body" id="chatbox">
+                        This is some text within a card block.
+                    </div>
+                </div>
+                  <div class="message-comp ">
+                        <textarea type="text" class="form-control-plaintext col-12" name="name" value="" id="inputmessage"></textarea>
+                        <button class="btn btn-primary col-12" type="button" onclick="sendMessage()">Enviar</button>
+                </div>
+
+ 
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>
+<script>
+    var socket;
+    var output = document.getElementById("chatbox");
+
+    function enterChat() {
+        socket = new WebSocket('ws://localhost:3000');
+
+        var obj = JSON.stringify({
+            name: document.getElementById('inputname').value
+        })
+
+        socket.onopen = function () {
+            socket.send(obj);
+            writeToScreen("agora voce esta conectado");
+
+        };
+
+        socket.onmessage = function (e) {
+            onMessage(e)
+        };
+
+        socket.onerror = function (e) {
+            onError(e)
+        };
+    }
+
+    function onMessage(e) {
+
+        var obj = JSON.parse(e.data);
+        if (obj.message === undefined) {
+            writeToScreen('<span style="color: green;"> ' + obj.name + ' entrou</span>');
+        } else {
+            writeToScreen('<span style="color: blue;"> ' + obj.name + ':' + obj.message + '</span>');
+        }
+    }
+
+    function onError(e) {
+        writeToScreen('<span style="color: red;">ERROR:</span> ' + e.data);
+    }
+
+    function sendMessage() {
+        var message = document.getElementById('inputmessage').value;
+        socket.send(JSON.stringify({
+            message: message
+        }));
+    }
+
+
+    var writeToScreen = function (message) {
+        var pre = document.createElement("p");
+        pre.style.wordWrap = "break-word";
+        pre.innerHTML = message;
+        output.appendChild(pre);
+    }
+</script>
