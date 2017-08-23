@@ -5,110 +5,42 @@
     <title>chat chato</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    .baloon{
-        border-radius: 10px;
-        padding: 10px;
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
+    <style>
 
-    }
-    /* Standard syntax */
- 
-</style>
+    </style>
 </head>
 
 <body>
+
     <div class="container">
-        <div class="col-6">
-
-            <div class="jumbotron">
-                  <hr class="my-4">
-
-                <div class="form-inline ">
-                    <h5 id="name-comp-text"></h5>
-                    <div class="form-group " id="name-comp-form">
-                        <label for="inputname" class=" col-form-label">Nome: </label>
-                        <input type="text" class="form-control-plaintext" name="name" value="" id="inputname"></input>
-                        <button class="btn btn-primary" type="button" onclick="enterChat()">Entrar</button>
-                    </div>
+        <div class="jumbotron">
+            <div class="col-lg-6">
+                <div class="input-group" id="name-comp-form">
+                    <input id="inputname" name="name" type="text" class="form-control" placeholder="Nome" aria-label="Nome">
+                    <span class="input-group-btn">
+                            <button class="btn btn-outline-success" type="button" onclick="enterChat()">Entrar</button>
+                          </span>
                 </div>
-                <div  id="name-full-comp"></div>
+            </div>
+            <div id="chat-container" class="hide">
+                <h5 id="name-comp-text"></h5>
+                <hr class="my-2">
+                <div id="name-full-comp"></div>
                 <div class="card">
                     <div class="card-body" id="chatbox">
-                     </div>
+                    </div>
                 </div>
-                  <div class="message-comp ">
-                        <textarea type="text" class="form-control-plaintext col-12" name="name" value="" id="inputmessage"></textarea>
-                        <button class="btn btn-primary col-12" type="button" onclick="sendMessage()">Enviar</button>
+                <hr class="my-1">
+                <div class="message-comp ">
+                    <textarea type="text" class="form-control-plaintext col-12" name="name" value="" placeholder="Digite sua mensagem" id="inputmessage"></textarea>
+                    <button id="sendmessage" class="btn btn-sm btn-primary col-12 " type="button" onclick="sendMessage()">Enviar</button>
                 </div>
-
- 
             </div>
-
-
         </div>
-
     </div>
-
-
+    <script src="app.js"></script>
 </body>
 
 </html>
-<script>
-    var socket;
-    var output = document.getElementById("chatbox");
-
-    function enterChat() {
-        socket = new WebSocket('ws://localhost:3000');
-
-        var obj = JSON.stringify({
-            name: document.getElementById('inputname').value
-        })
-
-        socket.onopen = function () {
-            socket.send(obj);
-            writeToScreen("agora voce esta conectado");
-            
-            document.getElementById('name-comp-form').style.display ="none";
-            document.getElementById('name-comp-text').innerText ='Olá '+ document.getElementById('inputname').value;
-        };
-
-        socket.onmessage = function (e) {
-            onMessage(e)
-        };
-
-        socket.onerror = function (e) {
-            onError(e)
-        };
-    }
-
-    function onMessage(e) {
-
-        var obj = JSON.parse(e.data);
-        if (obj.message === undefined) {
-            writeToScreen('<span style="color: green;"> ' + obj.name + ' entrou</span>');
-        } else {
-            writeToScreen('<span class="baloon" style="background-color: '+obj.color+';"> ' + obj.name + ':' + obj.message + '</span>');
-        }
-    }
-
-    function onError(e) {
-        writeToScreen('<span style="color: red;">ERROR:</span> ' + e.data);
-    }
-
-    function sendMessage() {
-        var message = document.getElementById('inputmessage').value;
-        socket.send(JSON.stringify({
-            message: message
-        }));
-        document.getElementById('inputmessage').value = '';
-    }
-
-
-    var writeToScreen = function (message) {
-        var pre = document.createElement("p");
-        pre.style.wordWrap = "break-word";
-        pre.innerHTML = message;
-        output.appendChild(pre);
-    }
-</script>

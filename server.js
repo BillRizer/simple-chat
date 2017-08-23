@@ -14,7 +14,7 @@ socket.on('request', function (req) {
     
     //criando chave de usuario
     users[req.key] = conn;
-    users[req.key].color = randomColor({hue: 'random',luminosity: 'random',format: 'rgba','alpha':0.3});
+    users[req.key].color = randomColor({hue: 'random',luminosity: 'random',format: 'rgba','alpha':0.5});
     
     conn.on('message', function (data) {
         var data = JSON.parse(data.utf8Data);
@@ -23,7 +23,7 @@ socket.on('request', function (req) {
             //add nome ao usuario
             users[req.key].name = data.name;
             //ele entrou agora
-            conn.send(buil_message(users[req.key].color,users[req.key].name),undefined);    
+            sendAll(buil_message(users[req.key].color,users[req.key].name),undefined);    
         }
         else{
             // conn.sendUTF(buil_message(users[req.key].name,data.message));    

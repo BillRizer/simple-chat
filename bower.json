@@ -1,0 +1,20 @@
+{
+  "name": "websocketss",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "teliz <teliz.pablo@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/teliz/simple-chat",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "v4.0.0-alpha.6"
+  }
+}
