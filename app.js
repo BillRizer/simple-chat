@@ -26,7 +26,7 @@ const onMessage = (e) => {
   if (obj.message === undefined) {
     writeToScreen(`<span class="newuser"> ${obj.name} entrou</span>`);
   } else {
-    writeToScreen(`<span class="baloon" style="background-color: ${obj.color };"> ${obj.name} : ${
+    writeToScreen(`<span class="baloon" style="background-color: ${obj.color};"> ${obj.name} : ${
       obj.message
     }</span>`);
   }
