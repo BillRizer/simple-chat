@@ -1,49 +1,50 @@
-var randomColor = require('randomcolor');
-var ws = require('websocket').server;
+const randomColor = require('randomcolor');
+const Ws = require('websocket').server;
 
-var http = require('http');
+const http = require('http');
 
-var socket = new ws({
-    httpServer: http.createServer().listen(3000)
+const socket = new Ws({
+  httpServer: http.createServer().listen(3000),
 });
-var users={};
- 
+const users = {};
 
-socket.on('request', function (req) {
-    var conn = req.accept(null, req.origin);
-    
-    //criando chave de usuario
-    users[req.key] = conn;
-    users[req.key].color = randomColor({hue: 'random',luminosity: 'random',format: 'rgba','alpha':0.5});
-    
-    conn.on('message', function (data) {
-        var data = JSON.parse(data.utf8Data);
-        
-        if(data.message == undefined){
-            //add nome ao usuario
-            users[req.key].name = data.name;
-            //ele entrou agora
-            sendAll(buil_message(users[req.key].color,users[req.key].name),undefined);    
-        }
-        else{
-            // conn.sendUTF(buil_message(users[req.key].name,data.message));    
-            sendAll(buil_message(users[req.key].color,users[req.key].name,data.message))
-        }
-        console.log(users);
-     });
+function buildMessage(color, name, message) {
+  return JSON.stringify({ name, message, color });
+}
 
-
-    conn.on('close', function (connection) {
-        console.log('close');
-    });
-});
 function sendAll(obj) {
-    for (var j of Object.keys(users)) {
-        // Отправить сообщения всем, включая отправителя
-         users[j].send(obj);
-    }
+  Object.keys(users).forEach(key => users[key].send(obj));
+//   for (const j of Object.keys(users)) {
+//     // Отправить сообщения всем, включая отправителя
+//     users[j].send(obj);
+//   }
 }
 
-function buil_message(color,name,message){
-    return JSON.stringify({name:name,message:message,color:color});
-}
+socket.on('request', (req) => {
+  const conn = req.accept(null, req.origin);
+
+  // criando chave de usuario
+  users[req.key] = conn;
+  users[req.key].color = randomColor({ hue: 'random', luminosity: 'random', format: 'rgba', alpha: 0.5 });
+
+  conn.on('message', (data) => {
+    const parsedData = JSON.parse(data.utf8Data);
+
+    if (parsedData.message === undefined) {
+      // add nome ao usuario
+      users[req.key].name = parsedData.name;
+      // ele entrou agora
+      sendAll(buildMessage(users[req.key].color, users[req.key].name), undefined);
+    } else {
+      // conn.sendUTF(buildMessage(users[req.key].name,parsedData.message));
+      sendAll(buildMessage(users[req.key].color, users[req.key].name, parsedData.message));
+    }
+    // console.log(users);
+  });
+
+
+  conn.on('close', () => {
+    // console.log('close');
+  });
+});
+
