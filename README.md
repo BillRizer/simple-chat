@@ -1,5 +1,5 @@
 # simple-chat
-Example of chat using nodejs and socket.io
+A simple chat using nodejs and websocket.
 
 ### Installation
 
@@ -15,6 +15,8 @@ $ npm run server
 ```
 
 ### Test sintax pattern
+
+Using[ Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript#airbnb-javascript-style-guide-)
 
 ```sh
 $ npm run lint

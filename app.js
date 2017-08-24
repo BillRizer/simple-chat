@@ -1,4 +1,5 @@
 /* eslint-env browser */
+
 let socket;
 const output = document.getElementById('chatbox');
 
@@ -77,4 +78,3 @@ document.addEventListener('DOMContentLoaded', () => {
       sendMessage();
     });
 });
-
