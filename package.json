@@ -8,11 +8,11 @@
     "lint": "./node_modules/.bin/eslint *.js",
     "precommit": "npm run lint",
     "server": "./node_modules/.bin/nodemon server.js"
-
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "anchorme": "^1.1.2",
     "randomcolor": "^0.5.3",
     "websocket": "^1.0.24"
   },

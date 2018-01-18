@@ -107,3 +107,16 @@ body {
     background: #f5f5f5;
     display: block;
 }
+
+/* bar tools */
+.emojis-box{
+    display: none;
+    max-height: 150px;
+    overflow-y: scroll;
+}
+.emojis-box span{
+    font-size: 22px;
+    cursor: pointer;
+}
+
+

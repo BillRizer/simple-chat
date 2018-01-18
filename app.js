@@ -8,7 +8,27 @@ const writeToScreen = (message) => {
   pre.className += ' linha';
   pre.innerHTML = message;
   output.appendChild(pre);
+
+  output.scrollTop = output.scrollHeight;
 };
+//TODO
+//se existir video dentro da mensagem ele add html para video
+const replaceIfExistVideoInside = (message) => {
+  console.log(message);
+  var er = /<a.+href="(.+((youtube.com|youtu.be)\/(embed|watch)(\?v=|\/)(.+)))".+<\/a>/;
+
+  var obj = message.match(er);
+  
+  if (obj != null) {
+    //obj[6] = id do video
+    var res = message.replace(er, '<object width="280" height="210" data="http://www.youtube.com/embed/' + obj[6] + '"></object>');
+  } else {
+    res = message;
+  }
+  return res;
+}
+  
+
 
 const sendMessage = () => {
   const message = document.getElementById('inputmessage').value;
@@ -24,20 +44,25 @@ const onError = (e) => {
 
 const onMessage = (e) => {
   const obj = JSON.parse(e.data);
-  if (obj.message === undefined) {
+
+  console.log(obj);
+
+  if (obj.type == 'status') {
     writeToScreen(`<span class="newuser"> ${obj.name} entrou</span>`);
   } else {
-    writeToScreen(`<span class="baloon" style="background-color: ${obj.color};"> ${obj.name} : ${
-      obj.message
-    }</span>`);
+    obj.message = replaceIfExistVideoInside(obj.message);
+
+    writeToScreen(`<span class="baloon" style="background-color: ${obj.color};">
+  ${obj.name} : ${obj.message}</span>`);
   }
 };
 
 const enterChat = () => {
-  socket = new WebSocket('ws://localhost:3000');
+  socket = new WebSocket('ws://' + window.location.host + ':3000');
 
   const obj = JSON.stringify({
     name: document.getElementById('inputname').value,
+    type: 'status'
   });
 
   socket.onopen = () => {
@@ -77,4 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .addEventListener('click', () => {
       sendMessage();
     });
+
+  $('#emojis-box span').click(function () {
+    $('#inputmessage').val($('#inputmessage').val() + ' ' + $(this).text() + ' ');
+  })
+
 });
