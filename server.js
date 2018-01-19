@@ -7,56 +7,68 @@ const anchorme = require("anchorme").default;
 
 
 const socket = new Ws({
-  httpServer: http.createServer().listen(3000),
+    httpServer: http.createServer().listen(3000),
 });
 const users = {};
 
-function buildMessage(type,color, name, message) {
-  console.log(JSON.stringify({type,name, message, color}));
-  return JSON.stringify({type,name, message, color});
+function buildMessage(type, color, name, message) {
+    var onlineUsers = getUsers();
+    console.log(JSON.stringify({ type, name, message, color, onlineUsers }));
+    return JSON.stringify({ type, name, message, color, onlineUsers });
+}
+
+function getUsers() {
+    var onlineUsers = [];
+    Object.keys(users).forEach(key => onlineUsers.push(users[key].name));
+    return onlineUsers;
+}
+
+function buildUsers(userDisconnected) {
+    var onlineUsers = getUsers();
+    return JSON.stringify({ onlineUsers, type: "onlineUsers", userDisconnected: userDisconnected });
 }
 
 function sendAll(obj) {
-  Object.keys(users).forEach(key => users[key].send(obj));
-//   for (const j of Object.keys(users)) {
-//     // Отправить сообщения всем, включая отправителя
-//     users[j].send(obj);
-//   }
+    Object.keys(users).forEach(key => users[key].send(obj));
 }
 
 socket.on('request', (req) => {
-  const conn = req.accept(null, req.origin);
+    const conn = req.accept(null, req.origin);
 
-  // criando chave de usuario
-  users[req.key] = conn;
-  users[req.key].color = randomColor({ hue: 'random', luminosity: 'random', format: 'rgba', alpha: 0.5 });
+    conn.on('message', (data) => {
 
-  conn.on('message', (data) => {
+        const parsedData = JSON.parse(data.utf8Data);
 
-    const parsedData = JSON.parse(data.utf8Data);
-    
-    //caso exista link na mensagem ele vai com o <a>
-    var message=undefined;
-    if(parsedData.message!=undefined){
-       message = anchorme(parsedData.message);
-    }
+        // criando chave de usuario
+        users[req.key] = conn;
+        users[req.key].id = req.key;
 
-    if(parsedData.type=='status'){
-      users[req.key].name = parsedData.name;
-    }
-    
-    sendAll(buildMessage(parsedData.type,users[req.key].color, users[req.key].name,message));
+        if (parsedData.type == 'status') {
+            users[req.key].name = parsedData.name;
+        }
+
+        if (users[req.key].color == undefined)
+            users[req.key].color = randomColor({ hue: 'random', luminosity: 'random', format: 'rgba', alpha: 0.5 });
 
 
-    // console.log(users);
-  });
+        //caso exista link na mensagem ele vai com o <a>
+        var message = undefined;
+        if (parsedData.message != undefined) {
+            message = anchorme(parsedData.message);
+        }
 
-  conn.on('close', function (code, reason) {
-    console.log(conn.user_id + ' disconnected');
-    delete users[conn.user_id];
-  });
-  // conn.on('close', () => {
-  //   // console.log('close');
-  // });
+
+
+        sendAll(buildMessage(parsedData.type, users[req.key].color, users[req.key].name, message));
+
+    });
+
+    conn.on('close', function(code, reason) {
+
+        console.log(conn.id + ' disconnected');
+        let name = users[conn.id].name;
+        delete users[conn.id];
+        sendAll(buildUsers(name));
+    });
+
 });
-
