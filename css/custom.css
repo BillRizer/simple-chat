@@ -19,8 +19,7 @@
 /* Space out content a bit */
 
 body {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding: 0;
 }
 
 
@@ -142,4 +141,26 @@ body {
 .emojis-box span {
     font-size: 22px;
     cursor: pointer;
+}
+
+.jumbotron{
+    padding:5px;
+}
+
+.table-online td::before{
+        content: " ";
+    background: green;
+    width: 10px;
+    float: left;
+    height: 10px;
+    display: block;
+    margin: 9px;
+    border-radius: 100%;
+}
+#onlineUsers{
+    background: #f5f5f5;
+    padding: 10px;
+    border: 1px solid #dfdfdf;
+}
+.chatmain{
 }

@@ -20,19 +20,13 @@ const writeToScreen = (message) => {
 const setUpOnlineUserslist = (users) => {
         var i = 0
         return `
-        <h5>Usuários online:</h5>
-        <table class="table table-hover table-bordered">
-        <thead>
-        <tr>
-        <th>Id</th>
-        <th>User</th>
-        </tr>
-        </thead>
+        <h6>Usuários online:</h6>
+        <table class="table-online">
+        
         <tbody>
         ${users.map(user => {
             return `
             <tr>
-            <td>${i++}</td>
             <td>${user}</td>
             </tr>
             `
@@ -104,7 +98,7 @@ const onMessage = (e) => {
 }
 
 const enterChat = () => {
-  socket = new WebSocket('ws://' + 'localhost' + ':3000')
+  socket = new WebSocket('ws://' +  window.location.host + ':3000')
 
   const obj = JSON.stringify({
     name: document.getElementById('inputname').value,
